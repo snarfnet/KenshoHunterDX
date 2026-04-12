@@ -9,20 +9,32 @@ import { daysUntilDeadline, isClosingSOon, formatDeadline } from "@/lib/kensho";
 
 type SortMode = "deadline" | "newest";
 
-const METHOD_COLORS: Record<string, string> = {
-  Twitter: "bg-sky-100 text-sky-700",
-  Web: "bg-green-100 text-green-700",
-  LINE: "bg-emerald-100 text-emerald-700",
+const METHOD_LABELS: Record<string, { label: string; color: string; bg: string }> = {
+  Twitter: {
+    label: "X / Twitter",
+    color: "#38bdf8",
+    bg: "rgba(56,189,248,0.1)",
+  },
+  Web: {
+    label: "Web",
+    color: "#4ade80",
+    bg: "rgba(74,222,128,0.1)",
+  },
+  LINE: {
+    label: "LINE",
+    color: "#22c55e",
+    bg: "rgba(34,197,94,0.1)",
+  },
 };
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  食品: "🍽️",
+const CATEGORY_ICON: Record<string, string> = {
+  食品: "🍽",
   家電: "📺",
   コスメ: "💄",
-  旅行: "✈️",
+  旅行: "✈",
   ギフト券: "🎫",
   ゲーム: "🎮",
-  その他: "📦",
+  その他: "◈",
 };
 
 export default function Home() {
@@ -56,32 +68,104 @@ export default function Home() {
   }, [activeKensho, selectedCategory, sortMode]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* AdSense広告枠（ヘッダー下） */}
-      <div className="w-full h-24 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm mb-8">
-        📢 広告枠（AdSense）
+    <div style={{ position: "relative", zIndex: 1 }}>
+      {/* Ad placeholder top */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8">
+        <div
+          className="ad-placeholder rounded-xl flex items-center justify-center text-sm mb-8"
+          style={{ height: 80 }}
+        >
+          広告枠
+        </div>
       </div>
 
-      {/* ヒーロー */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">
-          🎯 お得な懸賞情報を毎日更新！
-        </h2>
-        <p className="text-gray-500">
-          Twitter・Web・LINEの最新キャンペーンをまとめてチェック
-        </p>
+      {/* Hero */}
+      <div
+        className="hero-scanline"
+        style={{
+          paddingTop: "3rem",
+          paddingBottom: "3.5rem",
+          textAlign: "center",
+          position: "relative",
+        }}
+      >
+        {/* Ambient glow behind hero */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            height: 300,
+            background:
+              "radial-gradient(ellipse at center, rgba(212,175,55,0.07) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6" style={{ position: "relative" }}>
+          <p
+            style={{
+              fontSize: "0.7rem",
+              letterSpacing: "0.25em",
+              color: "var(--gold)",
+              textTransform: "uppercase",
+              marginBottom: "0.75rem",
+              opacity: 0.8,
+            }}
+          >
+            Daily Updated
+          </p>
+          <h2
+            style={{
+              fontFamily:
+                "'Hiragino Mincho ProN', 'Yu Mincho', 'Georgia', serif",
+              fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
+              fontWeight: 700,
+              color: "var(--text-primary)",
+              letterSpacing: "0.03em",
+              lineHeight: 1.3,
+              marginBottom: "1rem",
+            }}
+          >
+            お得な懸賞情報を、毎日更新。
+          </h2>
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "var(--text-secondary)",
+              lineHeight: 1.8,
+            }}
+          >
+            Twitter・Web・LINEの最新キャンペーンをまとめてチェック
+          </p>
+        </div>
       </div>
 
-      {/* フィルター＋ソート */}
-      <div className="mb-6 space-y-4">
-        <div className="flex flex-wrap gap-2">
+      {/* Filters + Sort */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-4">
+        {/* Category pills */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "0.5rem",
+            marginBottom: "0.75rem",
+          }}
+        >
           <button
             onClick={() => setSelectedCategory("all")}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-              selectedCategory === "all"
-                ? "bg-amber-500 text-white shadow-md"
-                : "bg-white text-gray-600 border border-gray-300 hover:border-amber-400"
-            }`}
+            className={
+              selectedCategory === "all" ? "filter-pill-active" : "filter-pill"
+            }
+            style={{
+              padding: "0.4rem 1rem",
+              borderRadius: 999,
+              fontSize: "0.8rem",
+              cursor: "pointer",
+              fontWeight: selectedCategory === "all" ? 600 : 400,
+              letterSpacing: "0.03em",
+            }}
           >
             すべて
           </button>
@@ -89,128 +173,320 @@ export default function Home() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                selectedCategory === cat
-                  ? "bg-amber-500 text-white shadow-md"
-                  : "bg-white text-gray-600 border border-gray-300 hover:border-amber-400"
-              }`}
+              className={
+                selectedCategory === cat ? "filter-pill-active" : "filter-pill"
+              }
+              style={{
+                padding: "0.4rem 1rem",
+                borderRadius: 999,
+                fontSize: "0.8rem",
+                cursor: "pointer",
+                fontWeight: selectedCategory === cat ? 600 : 400,
+                letterSpacing: "0.03em",
+              }}
             >
-              {CATEGORY_EMOJI[cat]} {cat}
+              {CATEGORY_ICON[cat]} {cat}
             </button>
           ))}
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setSortMode("deadline")}
-            className={`px-3 py-1.5 rounded text-sm transition ${
-              sortMode === "deadline"
-                ? "bg-gray-800 text-white"
-                : "bg-white text-gray-600 border border-gray-300"
-            }`}
-          >
-            締切が近い順
-          </button>
-          <button
-            onClick={() => setSortMode("newest")}
-            className={`px-3 py-1.5 rounded text-sm transition ${
-              sortMode === "newest"
-                ? "bg-gray-800 text-white"
-                : "bg-white text-gray-600 border border-gray-300"
-            }`}
-          >
-            新着順
-          </button>
-        </div>
-      </div>
 
-      {/* 件数 */}
-      <p className="text-sm text-gray-500 mb-4">
-        {filtered.length}件の懸賞が見つかりました
-      </p>
-
-      {/* カード一覧 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((k) => {
-          const days = daysUntilDeadline(k.deadline);
-          const closing = isClosingSOon(k.deadline);
-          return (
-            <a
-              key={k.id}
-              href={`/kensho/${k.id}`}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border border-gray-100 overflow-hidden group"
+        {/* Sort + count row */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "0.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <p
+            style={{
+              fontSize: "0.78rem",
+              color: "var(--text-muted)",
+              letterSpacing: "0.03em",
+            }}
+          >
+            <span style={{ color: "var(--gold)", fontWeight: 600 }}>
+              {filtered.length}
+            </span>{" "}
+            件の懸賞
+          </p>
+          <div style={{ display: "flex", gap: "0.4rem" }}>
+            <button
+              onClick={() => setSortMode("deadline")}
+              className={sortMode === "deadline" ? "sort-btn-active" : "sort-btn"}
+              style={{
+                padding: "0.3rem 0.9rem",
+                borderRadius: 6,
+                fontSize: "0.75rem",
+                cursor: "pointer",
+                letterSpacing: "0.03em",
+              }}
             >
-              {/* カテゴリ帯 */}
-              <div className="bg-gradient-to-r from-amber-400 to-yellow-400 px-4 py-2 flex items-center justify-between">
-                <span className="text-white font-bold text-sm">
-                  {CATEGORY_EMOJI[k.category]} {k.category}
-                </span>
-                <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    METHOD_COLORS[k.entryMethod] || "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {k.entryMethod}
-                </span>
-              </div>
-
-              {/* コンテンツ */}
-              <div className="p-4 space-y-3">
-                <h3 className="font-bold text-gray-800 group-hover:text-amber-600 transition line-clamp-2 leading-snug">
-                  {k.title}
-                </h3>
-                <p className="text-sm text-gray-500 line-clamp-2">
-                  {k.description}
-                </p>
-                <div className="text-xs text-gray-400">
-                  提供: {k.sponsor}
-                </div>
-                <div className="text-sm font-medium text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg">
-                  🎁 {k.prize}
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">
-                    📅 {formatDeadline(k.deadline)}まで
-                  </span>
-                  {closing && (
-                    <span className="text-xs font-bold text-white bg-red-500 px-2 py-0.5 rounded-full animate-pulse">
-                      ⏰ まもなく終了
-                    </span>
-                  )}
-                  {!closing && days <= 7 && (
-                    <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">
-                      あと{days}日
-                    </span>
-                  )}
-                </div>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-
-      {filtered.length === 0 && (
-        <div className="text-center py-20 text-gray-400">
-          <p className="text-4xl mb-4">🔍</p>
-          <p>該当する懸賞が見つかりませんでした</p>
+              締切が近い順
+            </button>
+            <button
+              onClick={() => setSortMode("newest")}
+              className={sortMode === "newest" ? "sort-btn-active" : "sort-btn"}
+              style={{
+                padding: "0.3rem 0.9rem",
+                borderRadius: 6,
+                fontSize: "0.75rem",
+                cursor: "pointer",
+                letterSpacing: "0.03em",
+              }}
+            >
+              新着順
+            </button>
+          </div>
         </div>
-      )}
 
-      {/* AdSense広告枠（一覧下） */}
-      <div className="w-full h-24 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm mt-8">
-        📢 広告枠（AdSense）
+        {/* Card grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            gap: "1.25rem",
+          }}
+        >
+          {filtered.map((k) => {
+            const days = daysUntilDeadline(k.deadline);
+            const closing = isClosingSOon(k.deadline);
+            const method = METHOD_LABELS[k.entryMethod];
+
+            return (
+              <a
+                key={k.id}
+                href={`/kensho/${k.id}`}
+                className="glass-card"
+                style={{
+                  borderRadius: 16,
+                  overflow: "hidden",
+                  display: "flex",
+                  flexDirection: "column",
+                  textDecoration: "none",
+                  color: "inherit",
+                }}
+              >
+                {/* Card top strip */}
+                <div
+                  style={{
+                    padding: "0.65rem 1rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderBottom: "1px solid rgba(255,255,255,0.05)",
+                    background: "rgba(255,255,255,0.03)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "var(--gold)",
+                      fontWeight: 600,
+                      letterSpacing: "0.06em",
+                    }}
+                  >
+                    {CATEGORY_ICON[k.category]} {k.category}
+                  </span>
+                  {method && (
+                    <span
+                      style={{
+                        fontSize: "0.68rem",
+                        fontWeight: 600,
+                        padding: "0.2rem 0.65rem",
+                        borderRadius: 999,
+                        color: method.color,
+                        background: method.bg,
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      {method.label}
+                    </span>
+                  )}
+                </div>
+
+                {/* Card body */}
+                <div
+                  style={{
+                    padding: "1rem 1.1rem 1.1rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.65rem",
+                    flex: 1,
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontFamily:
+                        "'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif",
+                      fontSize: "0.95rem",
+                      fontWeight: 700,
+                      color: "var(--text-primary)",
+                      lineHeight: 1.5,
+                      letterSpacing: "0.02em",
+                    }}
+                    className="line-clamp-2"
+                  >
+                    {k.title}
+                  </h3>
+
+                  <p
+                    style={{
+                      fontSize: "0.78rem",
+                      color: "var(--text-secondary)",
+                      lineHeight: 1.6,
+                    }}
+                    className="line-clamp-2"
+                  >
+                    {k.description}
+                  </p>
+
+                  <div
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "var(--text-muted)",
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    提供: {k.sponsor}
+                  </div>
+
+                  {/* Prize */}
+                  <div
+                    style={{
+                      padding: "0.5rem 0.85rem",
+                      borderRadius: 8,
+                      background: "rgba(212,175,55,0.08)",
+                      border: "1px solid rgba(212,175,55,0.18)",
+                      fontSize: "0.82rem",
+                      fontWeight: 600,
+                      color: "var(--gold-bright)",
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    🎁 {k.prize}
+                  </div>
+
+                  {/* Footer row */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginTop: "auto",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.72rem",
+                        color: "var(--text-muted)",
+                      }}
+                    >
+                      {formatDeadline(k.deadline)}まで
+                    </span>
+
+                    {closing ? (
+                      <span
+                        className="badge-neon-pulse"
+                        style={{
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          color: "#fff",
+                          background: "var(--red-neon)",
+                          padding: "0.2rem 0.65rem",
+                          borderRadius: 999,
+                          letterSpacing: "0.04em",
+                        }}
+                      >
+                        まもなく終了
+                      </span>
+                    ) : days <= 7 ? (
+                      <span
+                        style={{
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          color: "#fb923c",
+                          background: "rgba(251,146,60,0.12)",
+                          border: "1px solid rgba(251,146,60,0.3)",
+                          padding: "0.2rem 0.65rem",
+                          borderRadius: 999,
+                          letterSpacing: "0.04em",
+                        }}
+                      >
+                        あと{days}日
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+
+        {filtered.length === 0 && (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "5rem 0",
+              color: "var(--text-muted)",
+            }}
+          >
+            <p style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>◈</p>
+            <p style={{ fontSize: "0.9rem", letterSpacing: "0.05em" }}>
+              該当する懸賞が見つかりませんでした
+            </p>
+          </div>
+        )}
+
+        {/* Ad placeholder bottom */}
+        <div
+          className="ad-placeholder rounded-xl flex items-center justify-center text-sm mt-10"
+          style={{ height: 80 }}
+        >
+          広告枠
+        </div>
+
+        {/* About */}
+        <section
+          id="about"
+          className="glass-card"
+          style={{
+            marginTop: "3rem",
+            marginBottom: "2rem",
+            borderRadius: 16,
+            padding: "2rem 2.5rem",
+          }}
+        >
+          <h2
+            style={{
+              fontFamily:
+                "'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif",
+              fontSize: "1.1rem",
+              fontWeight: 700,
+              color: "var(--text-primary)",
+              letterSpacing: "0.04em",
+              marginBottom: "1rem",
+            }}
+          >
+            懸賞ハンターDXについて
+          </h2>
+          <p
+            style={{
+              fontSize: "0.85rem",
+              color: "var(--text-secondary)",
+              lineHeight: 2,
+              letterSpacing: "0.02em",
+            }}
+          >
+            懸賞ハンターDXは、Twitter・Web・LINEなどの最新懸賞・プレゼントキャンペーン情報を
+            まとめてお届けする情報サイトです。毎日更新される懸賞情報の中から、カテゴリや締切で
+            簡単に絞り込んで、気になるキャンペーンにすぐ応募できます。
+          </p>
+        </section>
       </div>
-
-      {/* About */}
-      <section id="about" className="mt-16 mb-8 bg-white rounded-xl shadow p-8">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
-          懸賞ハンターDXについて
-        </h2>
-        <p className="text-gray-600 leading-relaxed">
-          懸賞ハンターDXは、Twitter・Web・LINEなどの最新懸賞・プレゼントキャンペーン情報を
-          まとめてお届けする情報サイトです。毎日更新される懸賞情報の中から、カテゴリや締切で
-          簡単に絞り込んで、気になるキャンペーンにすぐ応募できます。
-        </p>
-      </section>
     </div>
   );
 }

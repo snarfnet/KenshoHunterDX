@@ -6,28 +6,33 @@ import { formatDeadline, daysUntilDeadline, isClosingSOon } from "@/lib/kensho";
 
 const allKensho = kenshoData as Kensho[];
 
-const METHOD_COLORS: Record<string, string> = {
-  Twitter: "bg-sky-100 text-sky-700",
-  Web: "bg-green-100 text-green-700",
-  LINE: "bg-emerald-100 text-emerald-700",
+const METHOD_LABELS: Record<string, { label: string; color: string; bg: string }> = {
+  Twitter: { label: "X / Twitter", color: "#38bdf8", bg: "rgba(56,189,248,0.1)" },
+  Web: { label: "Web", color: "#4ade80", bg: "rgba(74,222,128,0.1)" },
+  LINE: { label: "LINE", color: "#22c55e", bg: "rgba(34,197,94,0.1)" },
 };
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  食品: "🍽️",
+const CATEGORY_ICON: Record<string, string> = {
+  食品: "🍽",
   家電: "📺",
   コスメ: "💄",
-  旅行: "✈️",
+  旅行: "✈",
   ギフト券: "🎫",
   ゲーム: "🎮",
-  その他: "📦",
+  その他: "◈",
 };
 
 export function generateStaticParams() {
   return allKensho.map((k) => ({ id: k.id }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }) {
-  const k = allKensho.find((item) => item.id === params.id);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const k = allKensho.find((item) => item.id === id);
   if (!k) return { title: "懸賞が見つかりません | 懸賞ハンターDX" };
   return {
     title: `${k.title} | 懸賞ハンターDX`,
@@ -53,159 +58,363 @@ export default async function KenshoDetail({
   const days = daysUntilDeadline(k.deadline);
   const closing = isClosingSOon(k.deadline);
   const affiliateUrl = withAffiliate(k.url);
+  const method = METHOD_LABELS[k.entryMethod];
 
   const related = allKensho
     .filter((item) => item.id !== k.id && item.category === k.category)
     .slice(0, 3);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* AdSense広告枠（ヘッダー下） */}
-      <div className="w-full h-24 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm mb-8">
-        📢 広告枠（AdSense）
-      </div>
+    <div style={{ position: "relative", zIndex: 1 }}>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 
-      {/* パンくず */}
-      <nav className="text-sm text-gray-500 mb-6">
-        <a href="/" className="hover:text-amber-600 transition">
-          ホーム
-        </a>
-        <span className="mx-2">/</span>
-        <span className="text-gray-800">{k.title}</span>
-      </nav>
+        {/* Ad top */}
+        <div
+          className="ad-placeholder rounded-xl flex items-center justify-center text-sm mb-8"
+          style={{ height: 80 }}
+        >
+          広告枠
+        </div>
 
-      <div className="lg:flex gap-8">
-        {/* メインコンテンツ */}
-        <article className="flex-1">
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            {/* カテゴリ帯 */}
-            <div className="bg-gradient-to-r from-amber-400 to-yellow-400 px-6 py-3 flex items-center justify-between">
-              <span className="text-white font-bold">
-                {CATEGORY_EMOJI[k.category]} {k.category}
-              </span>
-              <span
-                className={`text-sm font-medium px-3 py-1 rounded-full ${
-                  METHOD_COLORS[k.entryMethod] || "bg-gray-100 text-gray-600"
-                }`}
+        {/* Breadcrumb */}
+        <nav
+          style={{
+            fontSize: "0.75rem",
+            color: "var(--text-muted)",
+            marginBottom: "1.5rem",
+            letterSpacing: "0.03em",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+          }}
+        >
+          <a href="/" className="link-muted">ホーム</a>
+          <span style={{ opacity: 0.4 }}>/</span>
+          <span
+            style={{
+              color: "var(--text-secondary)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              maxWidth: "60vw",
+            }}
+          >
+            {k.title}
+          </span>
+        </nav>
+
+        <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start" }}>
+
+          {/* Main article */}
+          <article style={{ flex: 1, minWidth: 0 }}>
+            <div className="glass-card" style={{ borderRadius: 18, overflow: "hidden" }}>
+
+              {/* Category strip */}
+              <div
+                style={{
+                  padding: "0.75rem 1.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  borderBottom: "1px solid rgba(255,255,255,0.05)",
+                  background: "rgba(212,175,55,0.05)",
+                }}
               >
-                {k.entryMethod}で応募
-              </span>
-            </div>
-
-            <div className="p-6 space-y-6">
-              <h1 className="text-2xl font-bold text-gray-800 leading-snug">
-                {k.title}
-              </h1>
-
-              {/* ステータス */}
-              <div className="flex flex-wrap gap-3 items-center">
-                <span className="text-sm text-gray-500">
-                  📅 締切: {formatDeadline(k.deadline)}
+                <span
+                  style={{
+                    fontSize: "0.78rem",
+                    fontWeight: 700,
+                    color: "var(--gold)",
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  {CATEGORY_ICON[k.category]} {k.category}
                 </span>
-                {closing && (
-                  <span className="text-xs font-bold text-white bg-red-500 px-3 py-1 rounded-full animate-pulse">
-                    ⏰ まもなく終了！
+                {method && (
+                  <span
+                    style={{
+                      fontSize: "0.72rem",
+                      fontWeight: 700,
+                      padding: "0.25rem 0.75rem",
+                      borderRadius: 999,
+                      color: method.color,
+                      background: method.bg,
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {method.label}で応募
                   </span>
                 )}
-                {!closing && days <= 7 && (
-                  <span className="text-xs font-bold text-orange-600 bg-orange-100 px-3 py-1 rounded-full">
-                    あと{days}日
+              </div>
+
+              <div style={{ padding: "1.75rem 1.75rem 2rem" }}>
+
+                {/* Title */}
+                <h1
+                  style={{
+                    fontFamily: "'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif",
+                    fontSize: "clamp(1.2rem, 3vw, 1.6rem)",
+                    fontWeight: 700,
+                    color: "var(--text-primary)",
+                    lineHeight: 1.5,
+                    letterSpacing: "0.02em",
+                    marginBottom: "1.25rem",
+                  }}
+                >
+                  {k.title}
+                </h1>
+
+                {/* Status badges */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "0.6rem",
+                    alignItems: "center",
+                    marginBottom: "1.5rem",
+                  }}
+                >
+                  <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
+                    <span style={{ opacity: 0.6 }}>締切 </span>
+                    {formatDeadline(k.deadline)}
                   </span>
-                )}
-              </div>
 
-              {/* 賞品 */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                <h2 className="text-sm font-bold text-amber-700 mb-1">
-                  🎁 賞品
-                </h2>
-                <p className="text-lg font-bold text-gray-800">{k.prize}</p>
-              </div>
-
-              {/* 説明 */}
-              <div>
-                <h2 className="text-sm font-bold text-gray-600 mb-2">
-                  📝 キャンペーン詳細
-                </h2>
-                <p className="text-gray-700 leading-relaxed">
-                  {k.description}
-                </p>
-              </div>
-
-              {/* 詳細情報 */}
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <span className="text-gray-500">主催者</span>
-                  <p className="font-medium text-gray-800 mt-1">{k.sponsor}</p>
+                  {closing ? (
+                    <span
+                      className="badge-neon-pulse"
+                      style={{
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
+                        color: "#fff",
+                        background: "var(--red-neon)",
+                        padding: "0.25rem 0.8rem",
+                        borderRadius: 999,
+                        letterSpacing: "0.05em",
+                      }}
+                    >
+                      まもなく終了！
+                    </span>
+                  ) : days <= 7 ? (
+                    <span
+                      style={{
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
+                        color: "#fb923c",
+                        background: "rgba(251,146,60,0.12)",
+                        border: "1px solid rgba(251,146,60,0.3)",
+                        padding: "0.25rem 0.8rem",
+                        borderRadius: 999,
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      あと{days}日
+                    </span>
+                  ) : null}
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <span className="text-gray-500">応募方法</span>
-                  <p className="font-medium text-gray-800 mt-1">
-                    {k.entryMethod}
+
+                {/* Prize box */}
+                <div
+                  style={{
+                    padding: "1rem 1.25rem",
+                    borderRadius: 12,
+                    background: "rgba(212,175,55,0.07)",
+                    border: "1px solid rgba(212,175,55,0.2)",
+                    marginBottom: "1.5rem",
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      color: "var(--gold)",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      marginBottom: "0.4rem",
+                      opacity: 0.8,
+                    }}
+                  >
+                    Prize
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "1.05rem",
+                      fontWeight: 700,
+                      color: "var(--text-primary)",
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    🎁 {k.prize}
                   </p>
                 </div>
-              </div>
 
-              {/* 応募ボタン */}
-              <a
-                href={affiliateUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full text-center bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition text-lg"
-              >
-                🚀 応募ページへ
-              </a>
-            </div>
-          </div>
-
-          {/* AdSense広告枠（記事下） */}
-          <div className="w-full h-24 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm mt-8">
-            📢 広告枠（AdSense）
-          </div>
-        </article>
-
-        {/* サイドバー */}
-        <aside className="lg:w-72 mt-8 lg:mt-0 space-y-6">
-          {/* AdSense広告枠（サイドバー） */}
-          <div className="w-full h-60 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-            📢 広告枠（AdSense）
-          </div>
-
-          {/* 関連懸賞 */}
-          {related.length > 0 && (
-            <div className="bg-white rounded-xl shadow p-4">
-              <h3 className="font-bold text-gray-800 mb-3">
-                同じカテゴリの懸賞
-              </h3>
-              <div className="space-y-3">
-                {related.map((r) => (
-                  <a
-                    key={r.id}
-                    href={`/kensho/${r.id}`}
-                    className="block p-3 bg-gray-50 rounded-lg hover:bg-amber-50 transition"
+                {/* Description */}
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <p
+                    style={{
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      color: "var(--text-muted)",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      marginBottom: "0.6rem",
+                    }}
                   >
-                    <p className="text-sm font-medium text-gray-800 line-clamp-2">
-                      {r.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      📅 {formatDeadline(r.deadline)}まで
-                    </p>
-                  </a>
-                ))}
+                    Campaign Detail
+                  </p>
+                  <p
+                    style={{
+                      fontSize: "0.88rem",
+                      color: "var(--text-secondary)",
+                      lineHeight: 2,
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    {k.description}
+                  </p>
+                </div>
+
+                {/* Info grid */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "0.75rem",
+                    marginBottom: "1.75rem",
+                  }}
+                >
+                  {[
+                    { label: "主催者", value: k.sponsor },
+                    { label: "応募方法", value: k.entryMethod },
+                  ].map(({ label, value }) => (
+                    <div
+                      key={label}
+                      style={{
+                        padding: "0.75rem 1rem",
+                        borderRadius: 10,
+                        background: "rgba(255,255,255,0.03)",
+                        border: "1px solid rgba(255,255,255,0.06)",
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontSize: "0.68rem",
+                          color: "var(--text-muted)",
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          marginBottom: "0.35rem",
+                        }}
+                      >
+                        {label}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "0.88rem",
+                          fontWeight: 600,
+                          color: "var(--text-primary)",
+                        }}
+                      >
+                        {value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                <a
+                  href={affiliateUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-gold"
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    textAlign: "center",
+                    padding: "1rem 1.5rem",
+                    borderRadius: 12,
+                    fontSize: "1rem",
+                    letterSpacing: "0.06em",
+                    textDecoration: "none",
+                  }}
+                >
+                  応募ページへ →
+                </a>
               </div>
             </div>
-          )}
-        </aside>
-      </div>
 
-      {/* 戻るリンク */}
-      <div className="mt-8">
-        <a
-          href="/"
-          className="inline-flex items-center text-amber-600 hover:text-amber-800 font-medium transition"
-        >
-          ← 懸賞一覧に戻る
-        </a>
+            {/* Ad article bottom */}
+            <div
+              className="ad-placeholder rounded-xl flex items-center justify-center text-sm mt-6"
+              style={{ height: 80 }}
+            >
+              広告枠
+            </div>
+          </article>
+
+          {/* Sidebar — hidden on mobile, shown on lg via inline approach */}
+          {related.length > 0 && (
+            <aside
+              style={{
+                width: 272,
+                flexShrink: 0,
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.25rem",
+              }}
+              className="hidden lg:flex"
+            >
+              {/* Ad sidebar */}
+              <div
+                className="ad-placeholder rounded-xl flex items-center justify-center text-sm"
+                style={{ height: 240 }}
+              >
+                広告枠
+              </div>
+
+              {/* Related */}
+              <div className="glass-card" style={{ borderRadius: 14, padding: "1.25rem" }}>
+                <h3
+                  style={{
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
+                    color: "var(--gold)",
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    marginBottom: "1rem",
+                    opacity: 0.85,
+                  }}
+                >
+                  同カテゴリの懸賞
+                </h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                  {related.map((r) => (
+                    <a key={r.id} href={`/kensho/${r.id}`} className="related-item">
+                      <p
+                        style={{
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          color: "var(--text-primary)",
+                          lineHeight: 1.5,
+                          marginBottom: "0.3rem",
+                        }}
+                        className="line-clamp-2"
+                      >
+                        {r.title}
+                      </p>
+                      <p style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                        {formatDeadline(r.deadline)}まで
+                      </p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </aside>
+          )}
+        </div>
+
+        {/* Back link */}
+        <div style={{ marginTop: "2rem" }}>
+          <a href="/" className="link-back">← 懸賞一覧に戻る</a>
+        </div>
       </div>
     </div>
   );

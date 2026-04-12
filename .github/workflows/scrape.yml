@@ -1,0 +1,39 @@
+name: 懸賞データ自動更新
+
+on:
+  schedule:
+    # 毎日朝6時（JST = UTC 21:00前日）
+    - cron: '0 21 * * *'
+    # 毎日夜18時（JST = UTC 09:00）
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  scrape-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: スクレイピング実行
+        run: npm run scrape
+
+      - name: 変更があればコミット
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/kensho.json
+          git diff --staged --quiet || git commit -m "chore: 懸賞データ自動更新 $(date +'%Y-%m-%d %H:%M')"
+          git push
+
+      - name: Vercelデプロイ
+        run: npx vercel --yes --prod --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
