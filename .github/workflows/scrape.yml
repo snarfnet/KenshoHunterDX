@@ -1,4 +1,4 @@
-name: 懸賞データ自動更新
+name: scrape-and-deploy
 
 on:
   schedule:
