@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import kenshoData from "@/data/kensho.json";
 import type { Kensho, Category } from "@/lib/types";
 import { ALL_CATEGORIES } from "@/lib/types";
@@ -40,23 +40,30 @@ const CATEGORY_ICON: Record<string, string> = {
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<Category | "all">("all");
   const [sortMode, setSortMode] = useState<SortMode>("deadline");
+  const [mounted, setMounted] = useState(false);
 
-  const activeKensho = useMemo(() => {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const allData = kenshoData as Kensho[];
+
+  const filtered = useMemo(() => {
+    // Filter expired
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return (kenshoData as Kensho[]).filter((k) => {
+    let list = allData.filter((k) => {
       const deadline = new Date(k.deadline);
       deadline.setHours(23, 59, 59, 999);
       return deadline >= today;
     });
-  }, []);
 
-  const filtered = useMemo(() => {
-    let list =
-      selectedCategory === "all"
-        ? activeKensho
-        : activeKensho.filter((k) => k.category === selectedCategory);
+    // Filter by category
+    if (selectedCategory !== "all") {
+      list = list.filter((k) => k.category === selectedCategory);
+    }
 
+    // Sort
     list = [...list].sort((a, b) => {
       if (sortMode === "deadline") {
         return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
@@ -65,7 +72,7 @@ export default function Home() {
     });
 
     return list;
-  }, [activeKensho, selectedCategory, sortMode]);
+  }, [allData, selectedCategory, sortMode, mounted]);
 
   return (
     <div style={{ position: "relative", zIndex: 1 }}>
@@ -244,7 +251,13 @@ export default function Home() {
         </div>
 
         {/* Card grid */}
+        {!mounted ? (
+          <div style={{ textAlign: "center", padding: "3rem 0", color: "var(--text-muted)" }}>
+            読み込み中...
+          </div>
+        ) : (
         <div
+          key={`${selectedCategory}-${sortMode}`}
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
@@ -425,8 +438,9 @@ export default function Home() {
             );
           })}
         </div>
+        )}
 
-        {filtered.length === 0 && (
+        {mounted && filtered.length === 0 && (
           <div
             style={{
               textAlign: "center",
