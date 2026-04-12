@@ -7,19 +7,19 @@ import { formatDeadline, daysUntilDeadline, isClosingSOon } from "@/lib/kensho";
 const allKensho = kenshoData as Kensho[];
 
 const METHOD_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-  Twitter: { label: "X / Twitter", color: "#38bdf8", bg: "rgba(56,189,248,0.1)" },
-  Web: { label: "Web", color: "#4ade80", bg: "rgba(74,222,128,0.1)" },
-  LINE: { label: "LINE", color: "#22c55e", bg: "rgba(34,197,94,0.1)" },
+  Twitter: { label: "X / Twitter", color: "#1d9bf0", bg: "#e8f5fd" },
+  Web: { label: "Web", color: "#43a047", bg: "#e8f5e9" },
+  LINE: { label: "LINE", color: "#06c755", bg: "#e8f8ed" },
 };
 
 const CATEGORY_ICON: Record<string, string> = {
   食品: "🍽",
   家電: "📺",
   コスメ: "💄",
-  旅行: "✈",
+  旅行: "✈️",
   ギフト券: "🎫",
   ゲーム: "🎮",
-  その他: "◈",
+  その他: "📦",
 };
 
 export function generateStaticParams() {
@@ -65,81 +65,49 @@ export default async function KenshoDetail({
     .slice(0, 3);
 
   return (
-    <div style={{ position: "relative", zIndex: 1 }}>
+    <div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-
         {/* Ad top */}
-        <div
-          className="ad-placeholder rounded-xl flex items-center justify-center text-sm mb-8"
-          style={{ height: 80 }}
-        >
+        <div className="ad-placeholder flex items-center justify-center text-sm mb-8" style={{ height: 80 }}>
           広告枠
         </div>
 
         {/* Breadcrumb */}
-        <nav
-          style={{
-            fontSize: "0.75rem",
-            color: "var(--text-muted)",
-            marginBottom: "1.5rem",
-            letterSpacing: "0.03em",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
-          }}
-        >
-          <a href="/" className="link-muted">ホーム</a>
-          <span style={{ opacity: 0.4 }}>/</span>
-          <span
-            style={{
-              color: "var(--text-secondary)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              maxWidth: "60vw",
-            }}
-          >
+        <nav style={{ fontSize: "0.78rem", color: "#b0a4a4", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+          <a href="/" style={{ color: "#7a6e6e", textDecoration: "none" }}>🐱 ホーム</a>
+          <span style={{ opacity: 0.5 }}>/</span>
+          <span style={{ color: "#7a6e6e", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "60vw" }}>
             {k.title}
           </span>
         </nav>
 
-        <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start" }}>
-
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Main article */}
           <article style={{ flex: 1, minWidth: 0 }}>
-            <div className="glass-card" style={{ borderRadius: 18, overflow: "hidden" }}>
-
+            <div className="cute-card" style={{ overflow: "hidden" }}>
               {/* Category strip */}
               <div
                 style={{
-                  padding: "0.75rem 1.5rem",
+                  padding: "0.7rem 1.25rem",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  borderBottom: "1px solid rgba(255,255,255,0.05)",
-                  background: "rgba(212,175,55,0.05)",
+                  borderBottom: "1px solid #f5ede3",
+                  background: "#fdf8f2",
                 }}
               >
-                <span
-                  style={{
-                    fontSize: "0.78rem",
-                    fontWeight: 700,
-                    color: "var(--gold)",
-                    letterSpacing: "0.06em",
-                  }}
-                >
+                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#e8739a" }}>
                   {CATEGORY_ICON[k.category]} {k.category}
                 </span>
                 {method && (
                   <span
                     style={{
-                      fontSize: "0.72rem",
+                      fontSize: "0.74rem",
                       fontWeight: 700,
                       padding: "0.25rem 0.75rem",
                       borderRadius: 999,
                       color: method.color,
                       background: method.bg,
-                      letterSpacing: "0.04em",
                     }}
                   >
                     {method.label}で応募
@@ -147,64 +115,50 @@ export default async function KenshoDetail({
                 )}
               </div>
 
-              <div style={{ padding: "1.75rem 1.75rem 2rem" }}>
-
+              <div style={{ padding: "1.5rem 1.5rem 1.75rem" }}>
                 {/* Title */}
                 <h1
                   style={{
-                    fontFamily: "'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif",
-                    fontSize: "clamp(1.2rem, 3vw, 1.6rem)",
+                    fontSize: "clamp(1.15rem, 3vw, 1.5rem)",
                     fontWeight: 700,
-                    color: "var(--text-primary)",
-                    lineHeight: 1.5,
-                    letterSpacing: "0.02em",
-                    marginBottom: "1.25rem",
+                    color: "#3a3030",
+                    lineHeight: 1.55,
+                    marginBottom: "1rem",
                   }}
                 >
                   {k.title}
                 </h1>
 
-                {/* Status badges */}
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "0.6rem",
-                    alignItems: "center",
-                    marginBottom: "1.5rem",
-                  }}
-                >
-                  <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
-                    <span style={{ opacity: 0.6 }}>締切 </span>
-                    {formatDeadline(k.deadline)}
+                {/* Status */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", alignItems: "center", marginBottom: "1.25rem" }}>
+                  <span style={{ fontSize: "0.8rem", color: "#7a6e6e" }}>
+                    📅 締切: {formatDeadline(k.deadline)}
                   </span>
-
                   {closing ? (
                     <span
-                      className="badge-neon-pulse"
+                      className="badge-pulse"
                       style={{
-                        fontSize: "0.72rem",
+                        fontSize: "0.74rem",
                         fontWeight: 700,
-                        color: "#fff",
-                        background: "var(--red-neon)",
-                        padding: "0.25rem 0.8rem",
+                        color: "#ef5350",
+                        background: "#ffebee",
+                        padding: "0.25rem 0.75rem",
                         borderRadius: 999,
-                        letterSpacing: "0.05em",
+                        border: "1px solid #ffcdd2",
                       }}
                     >
-                      まもなく終了！
+                      🔥 まもなく終了！
                     </span>
                   ) : days <= 7 ? (
                     <span
                       style={{
-                        fontSize: "0.72rem",
+                        fontSize: "0.74rem",
                         fontWeight: 700,
-                        color: "#fb923c",
-                        background: "rgba(251,146,60,0.12)",
-                        border: "1px solid rgba(251,146,60,0.3)",
-                        padding: "0.25rem 0.8rem",
+                        color: "#f57c00",
+                        background: "#fff3e0",
+                        padding: "0.25rem 0.75rem",
                         borderRadius: 999,
-                        letterSpacing: "0.04em",
+                        border: "1px solid #ffe0b2",
                       }}
                     >
                       あと{days}日
@@ -212,76 +166,36 @@ export default async function KenshoDetail({
                   ) : null}
                 </div>
 
-                {/* Prize box */}
+                {/* Prize */}
                 <div
                   style={{
-                    padding: "1rem 1.25rem",
-                    borderRadius: 12,
-                    background: "rgba(212,175,55,0.07)",
-                    border: "1px solid rgba(212,175,55,0.2)",
-                    marginBottom: "1.5rem",
+                    padding: "0.9rem 1.1rem",
+                    borderRadius: 14,
+                    background: "#fff8f0",
+                    border: "1.5px solid #f5e0c0",
+                    marginBottom: "1.25rem",
                   }}
                 >
-                  <p
-                    style={{
-                      fontSize: "0.7rem",
-                      fontWeight: 700,
-                      color: "var(--gold)",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      marginBottom: "0.4rem",
-                      opacity: 0.8,
-                    }}
-                  >
-                    Prize
+                  <p style={{ fontSize: "0.72rem", fontWeight: 700, color: "#e8739a", marginBottom: "0.3rem" }}>
+                    🎁 賞品
                   </p>
-                  <p
-                    style={{
-                      fontSize: "1.05rem",
-                      fontWeight: 700,
-                      color: "var(--text-primary)",
-                      letterSpacing: "0.02em",
-                    }}
-                  >
-                    🎁 {k.prize}
+                  <p style={{ fontSize: "1rem", fontWeight: 700, color: "#3a3030" }}>
+                    {k.prize}
                   </p>
                 </div>
 
                 {/* Description */}
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <p
-                    style={{
-                      fontSize: "0.7rem",
-                      fontWeight: 700,
-                      color: "var(--text-muted)",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      marginBottom: "0.6rem",
-                    }}
-                  >
-                    Campaign Detail
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <p style={{ fontSize: "0.74rem", fontWeight: 700, color: "#b0a4a4", marginBottom: "0.5rem" }}>
+                    📝 キャンペーン詳細
                   </p>
-                  <p
-                    style={{
-                      fontSize: "0.88rem",
-                      color: "var(--text-secondary)",
-                      lineHeight: 2,
-                      letterSpacing: "0.02em",
-                    }}
-                  >
+                  <p style={{ fontSize: "0.88rem", color: "#7a6e6e", lineHeight: 2 }}>
                     {k.description}
                   </p>
                 </div>
 
                 {/* Info grid */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "0.75rem",
-                    marginBottom: "1.75rem",
-                  }}
-                >
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.5rem" }}>
                   {[
                     { label: "主催者", value: k.sponsor },
                     { label: "応募方法", value: k.entryMethod },
@@ -289,32 +203,14 @@ export default async function KenshoDetail({
                     <div
                       key={label}
                       style={{
-                        padding: "0.75rem 1rem",
-                        borderRadius: 10,
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(255,255,255,0.06)",
+                        padding: "0.7rem 0.9rem",
+                        borderRadius: 12,
+                        background: "#faf6f0",
+                        border: "1px solid #f0e6d8",
                       }}
                     >
-                      <p
-                        style={{
-                          fontSize: "0.68rem",
-                          color: "var(--text-muted)",
-                          letterSpacing: "0.08em",
-                          textTransform: "uppercase",
-                          marginBottom: "0.35rem",
-                        }}
-                      >
-                        {label}
-                      </p>
-                      <p
-                        style={{
-                          fontSize: "0.88rem",
-                          fontWeight: 600,
-                          color: "var(--text-primary)",
-                        }}
-                      >
-                        {value}
-                      </p>
+                      <p style={{ fontSize: "0.7rem", color: "#b0a4a4", marginBottom: "0.25rem" }}>{label}</p>
+                      <p style={{ fontSize: "0.88rem", fontWeight: 600, color: "#3a3030" }}>{value}</p>
                     </div>
                   ))}
                 </div>
@@ -324,96 +220,75 @@ export default async function KenshoDetail({
                   href={affiliateUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-gold"
+                  className="btn-cta"
                   style={{
                     display: "block",
                     width: "100%",
                     textAlign: "center",
                     padding: "1rem 1.5rem",
-                    borderRadius: 12,
                     fontSize: "1rem",
-                    letterSpacing: "0.06em",
+                    letterSpacing: "0.04em",
                     textDecoration: "none",
                   }}
                 >
-                  応募ページへ →
+                  🐾 応募ページへ
                 </a>
               </div>
             </div>
 
-            {/* Ad article bottom */}
-            <div
-              className="ad-placeholder rounded-xl flex items-center justify-center text-sm mt-6"
-              style={{ height: 80 }}
-            >
+            {/* Ad bottom */}
+            <div className="ad-placeholder flex items-center justify-center text-sm mt-6" style={{ height: 80 }}>
               広告枠
             </div>
           </article>
 
-          {/* Sidebar — hidden on mobile, shown on lg via inline approach */}
-          {related.length > 0 && (
-            <aside
-              style={{
-                width: 272,
-                flexShrink: 0,
-                display: "flex",
-                flexDirection: "column",
-                gap: "1.25rem",
-              }}
-              className="hidden lg:flex"
-            >
-              {/* Ad sidebar */}
-              <div
-                className="ad-placeholder rounded-xl flex items-center justify-center text-sm"
-                style={{ height: 240 }}
-              >
-                広告枠
-              </div>
+          {/* Sidebar */}
+          <aside className="lg:w-72 flex-shrink-0 flex flex-col gap-5">
+            {/* Ad sidebar */}
+            <div className="ad-placeholder flex items-center justify-center text-sm" style={{ height: 240 }}>
+              広告枠
+            </div>
 
-              {/* Related */}
-              <div className="glass-card" style={{ borderRadius: 14, padding: "1.25rem" }}>
-                <h3
-                  style={{
-                    fontSize: "0.72rem",
-                    fontWeight: 700,
-                    color: "var(--gold)",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    marginBottom: "1rem",
-                    opacity: 0.85,
-                  }}
-                >
-                  同カテゴリの懸賞
+            {/* Related */}
+            {related.length > 0 && (
+              <div className="cute-card" style={{ padding: "1.1rem" }}>
+                <h3 style={{ fontSize: "0.78rem", fontWeight: 700, color: "#e8739a", marginBottom: "0.75rem" }}>
+                  🐱 同じカテゴリの懸賞
                 </h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {related.map((r) => (
-                    <a key={r.id} href={`/kensho/${r.id}`} className="related-item">
-                      <p
-                        style={{
-                          fontSize: "0.8rem",
-                          fontWeight: 600,
-                          color: "var(--text-primary)",
-                          lineHeight: 1.5,
-                          marginBottom: "0.3rem",
-                        }}
-                        className="line-clamp-2"
-                      >
+                    <a
+                      key={r.id}
+                      href={`/kensho/${r.id}`}
+                      style={{
+                        display: "block",
+                        padding: "0.7rem 0.8rem",
+                        borderRadius: 12,
+                        background: "#faf6f0",
+                        border: "1px solid #f0e6d8",
+                        textDecoration: "none",
+                        transition: "background 0.2s, border-color 0.2s",
+                      }}
+                    >
+                      <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "#3a3030", lineHeight: 1.5, marginBottom: "0.2rem" }} className="line-clamp-2">
                         {r.title}
                       </p>
-                      <p style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
-                        {formatDeadline(r.deadline)}まで
+                      <p style={{ fontSize: "0.7rem", color: "#b0a4a4" }}>
+                        📅 {formatDeadline(r.deadline)}まで
                       </p>
                     </a>
                   ))}
                 </div>
               </div>
-            </aside>
-          )}
+            )}
+          </aside>
         </div>
 
-        {/* Back link */}
-        <div style={{ marginTop: "2rem" }}>
-          <a href="/" className="link-back">← 懸賞一覧に戻る</a>
+        {/* Back */}
+        <div style={{ marginTop: "1.5rem" }}>
+          <a href="/" style={{ fontSize: "0.82rem", color: "#e8739a", textDecoration: "none", fontWeight: 600 }}>
+            ← 懸賞一覧に戻るにゃ🐾
+          </a>
         </div>
       </div>
     </div>

@@ -17,49 +17,37 @@ function Header() {
   return (
     <header
       style={{
-        background: "rgba(15, 15, 26, 0.85)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
+        background: "rgba(255, 255, 255, 0.92)",
+        borderBottom: "1.5px solid #f0e6d8",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         position: "sticky",
         top: 0,
         zIndex: 50,
       }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-3 group">
-          {/* Logo mark */}
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              background: "linear-gradient(135deg, #c9a227, #f0c841)",
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 16,
-              boxShadow: "0 0 16px rgba(212,175,55,0.4)",
-              flexShrink: 0,
-            }}
-          >
-            ◆
-          </div>
+        <a
+          href="/"
+          className="flex items-center gap-2"
+          style={{ textDecoration: "none" }}
+        >
+          <span style={{ fontSize: "1.6rem" }}>🐱</span>
           <span
             style={{
-              fontFamily: "'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif",
-              fontSize: "1.15rem",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "#f0ede6",
+              fontSize: "1.2rem",
+              fontWeight: 800,
+              color: "#3a3030",
+              letterSpacing: "0.02em",
             }}
           >
             懸賞ハンター
             <span
               style={{
-                color: "#d4af37",
-                textShadow: "0 0 16px rgba(212,175,55,0.5)",
-                marginLeft: 1,
+                background: "linear-gradient(135deg, #e8739a, #f5a623)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                marginLeft: 2,
               }}
             >
               DX
@@ -68,8 +56,28 @@ function Header() {
         </a>
 
         <nav className="hidden sm:flex items-center gap-6">
-          <a href="/" className="nav-link">ホーム</a>
-          <a href="#about" className="nav-link">サイトについて</a>
+          <a
+            href="/"
+            style={{
+              fontSize: "0.82rem",
+              color: "#7a6e6e",
+              textDecoration: "none",
+              transition: "color 0.2s",
+            }}
+          >
+            ホーム
+          </a>
+          <a
+            href="#about"
+            style={{
+              fontSize: "0.82rem",
+              color: "#7a6e6e",
+              textDecoration: "none",
+              transition: "color 0.2s",
+            }}
+          >
+            サイトについて
+          </a>
         </nav>
       </div>
     </header>
@@ -80,56 +88,44 @@ function Footer() {
   return (
     <footer
       style={{
-        background: "rgba(10, 10, 18, 0.9)",
-        borderTop: "1px solid rgba(255,255,255,0.05)",
+        background: "#faf6f0",
+        borderTop: "1.5px solid #f0e6d8",
         marginTop: "auto",
       }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
           <div className="flex items-center gap-2">
-            <div
-              style={{
-                width: 24,
-                height: 24,
-                background: "linear-gradient(135deg, #c9a227, #f0c841)",
-                borderRadius: 6,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 11,
-                color: "#0f0f1a",
-              }}
-            >
-              ◆
-            </div>
+            <span style={{ fontSize: "1.2rem" }}>🐱</span>
             <span
               style={{
-                fontFamily:
-                  "'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif",
                 fontWeight: 700,
                 fontSize: "0.9rem",
-                color: "#f0ede6",
-                letterSpacing: "0.05em",
+                color: "#3a3030",
               }}
             >
               懸賞ハンターDX
             </span>
           </div>
-          <p
-            style={{
-              fontSize: "0.75rem",
-              color: "rgba(90,86,106,1)",
-              letterSpacing: "0.03em",
-            }}
-          >
+          <p style={{ fontSize: "0.75rem", color: "#b0a4a4" }}>
             &copy; 2026 懸賞ハンターDX. All rights reserved.
           </p>
         </div>
+        <div
+          style={{
+            textAlign: "center",
+            fontSize: "1.5rem",
+            letterSpacing: "0.5em",
+            opacity: 0.15,
+            marginBottom: "0.75rem",
+          }}
+        >
+          🐾🐾🐾🐾🐾
+        </div>
         <p
           style={{
-            fontSize: "0.7rem",
-            color: "rgba(90,86,106,0.8)",
+            fontSize: "0.72rem",
+            color: "#b0a4a4",
             textAlign: "center",
             lineHeight: 1.8,
           }}
@@ -149,7 +145,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className="h-full antialiased">
-      <body className="min-h-full flex flex-col" style={{ position: "relative", zIndex: 1 }}>
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9404799280370656"
+          crossOrigin="anonymous"
+        />
+      </head>
+      <body className="min-h-full flex flex-col">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
