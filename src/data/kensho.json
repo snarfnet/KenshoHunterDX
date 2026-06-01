@@ -1662,5 +1662,18 @@
     "prize": "詳細はリンク先を確認",
     "entryMethod": "Web",
     "createdAt": "2026-05-11"
+  },
+  {
+    "id": "VUNDLTE3ODAzMjU2",
+    "title": "【UCC】BLACK無糖 黒で叶える至福のひとときキャンペーン",
+    "description": "対象商品に貼付されているシール内の二次元コードを読み込んで応募すると、その場で抽選10,000名様に景品が当たるチャンス！",
+    "category": "食品",
+    "deadline": "2026-08-31",
+    "imageUrl": "https://www.ucc.co.jp/campaign/br04ca0000000xvg-img/HP_710x710_0525.jpg",
+    "url": "https://www.ucc.co.jp/black/cp26/",
+    "sponsor": "UCC上島珈琲株式会社",
+    "prize": "詳細はリンク先を確認",
+    "entryMethod": "Web",
+    "createdAt": "2026-06-01"
   }
 ]
